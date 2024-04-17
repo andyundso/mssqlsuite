@@ -36,11 +36,12 @@ runs:
         MSSQL_AGENT_ENABLED: "true"
       run: |
         Write-Output "Getting variables for suite"
+        $showLog = "${{ inputs.show-log }}" -eq "true"
 
         $params = @{
             Install         = ("${{ inputs.install }}" -split ",").Trim()
             SaPassword      = "${{ inputs.sa-password }}"
-            ShowLog         = ${{ inputs.show-log }}
+            ShowLog         = $showLog
             Collation       = "${{ inputs.Collation }}"
             Version         = "${{ inputs.Version }}"
         }
