@@ -49,29 +49,25 @@ if ("sqlengine" -in $Install) {
         $ProgressPreference = "SilentlyContinue"
         switch ($Version) {
             "2017" {
-                $exeUri = "https://download.microsoft.com/download/E/F/2/EF23C21D-7860-4F05-88CE-39AA114B014B/SQLServer2017-DEV-x64-ENU.exe"
+                $exeUri = "https://download.microsoft.com/download/5/A/7/5A7065A2-C81C-4A31-9972-8A31AC9388C1/SQLServer2017-SSEI-Dev.exe"
                 $boxUri = "https://download.microsoft.com/download/E/F/2/EF23C21D-7860-4F05-88CE-39AA114B014B/SQLServer2017-DEV-x64-ENU.box"
-                $installOptions = ""
                 $versionMajor = 14
             }
             "2019" {
-                $exeUri = "https://download.microsoft.com/download/7/c/1/7c14e92e-bdcb-4f89-b7cf-93543e7112d1/SQLServer2019-DEV-x64-ENU.exe"
+                $exeUri = "https://download.microsoft.com/download/d/a/2/da259851-b941-459d-989c-54a18a5d44dd/SQL2019-SSEI-Dev.exe"
                 $boxUri = "https://download.microsoft.com/download/7/c/1/7c14e92e-bdcb-4f89-b7cf-93543e7112d1/SQLServer2019-DEV-x64-ENU.box"
-                $installOptions = "/USESQLRECOMMENDEDMEMORYLIMITS"
                 $versionMajor = 15
             }
             "2022" {
-                $exeUri = "https://download.microsoft.com/download/3/8/d/38de7036-2433-4207-8eae-06e247e17b25/SQLServer2022-DEV-x64-ENU.exe"
+                $exeUri = "https://download.microsoft.com/download/c/c/9/cc9c6797-383c-4b24-8920-dc057c1de9d3/SQL2022-SSEI-Dev.exe"
                 $boxUri = "https://download.microsoft.com/download/3/8/d/38de7036-2433-4207-8eae-06e247e17b25/SQLServer2022-DEV-x64-ENU.box"
-                $installOptions = "/USESQLRECOMMENDEDMEMORYLIMITS"
                 $versionMajor = 16
             }
         }
-        Invoke-WebRequest -Uri $exeUri -OutFile sqlsetup.exe
-        Invoke-WebRequest -Uri $boxUri -OutFile sqlsetup.box
-        Start-Process -Wait -FilePath ./sqlsetup.exe -ArgumentList /qs, /x:setup
 
-        .\setup\setup.exe /q /ACTION=Install /INSTANCENAME=MSSQLSERVER /FEATURES=SQLEngine /UPDATEENABLED=0 /SQLSVCACCOUNT='NT SERVICE\MSSQLSERVER' /SQLSYSADMINACCOUNTS='BUILTIN\ADMINISTRATORS' /TCPENABLED=1 /NPENABLED=0 /IACCEPTSQLSERVERLICENSETERMS /SQLCOLLATION=$Collation $installOptions
+        Invoke-WebRequest -Uri $exeUri -OutFile sqlsetup.exe
+        $argumentList = "/q", "/ACTION=Install", "/IACCEPTSQLSERVERLICENSETERMS"
+        Start-Process -Wait -FilePath .\sqlsetup.exe -ArgumentList $argumentList
 
         Set-ItemProperty -path "HKLM:\Software\Microsoft\Microsoft SQL Server\MSSQL$versionMajor.MSSQLSERVER\MSSQLSERVER\" -Name LoginMode -Value 2
         Restart-Service MSSQLSERVER
